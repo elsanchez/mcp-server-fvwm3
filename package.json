@@ -1,0 +1,36 @@
+{
+  "name": "mcp-server-fvwm3",
+  "version": "1.0.0",
+  "description": "MCP Server for FVWM3 window manager - provides resources, tools and prompts for FVWM configuration",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "mcp-server-fvwm3": "build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "dev": "node --enable-source-maps build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "fvwm",
+    "fvwm3",
+    "window-manager",
+    "x11",
+    "tiling"
+  ],
+  "author": "elsanchez",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
