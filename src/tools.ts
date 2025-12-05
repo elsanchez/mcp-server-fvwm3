@@ -151,15 +151,31 @@ export async function executeTool(name: string, args: any) {
     switch (name) {
       case "fvwm_execute": {
         const { command } = args;
-        const { stdout, stderr } = await execAsync(`FvwmCommand "${command}"`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: stdout || stderr || "Command executed successfully",
-            },
-          ],
-        };
+        try {
+          const { stdout, stderr } = await execAsync(`FvwmCommand "${command.replace(/"/g, '\\"')}"`);
+          return {
+            content: [
+              {
+                type: "text",
+                text: stdout || stderr || "Command executed successfully",
+              },
+            ],
+          };
+        } catch (error: any) {
+          // FvwmCommand may return non-zero exit code even when command succeeds
+          // Check if the error contains actual error message
+          if (error.stderr && error.stderr.trim()) {
+            throw error;
+          }
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Command executed (no output)",
+              },
+            ],
+          };
+        }
       }
 
       case "fvwm_get_window_info": {
@@ -214,7 +230,12 @@ export async function executeTool(name: string, args: any) {
       }
 
       case "fvwm_restart": {
-        await execAsync('FvwmCommand "Restart"');
+        try {
+          await execAsync('FvwmCommand "Restart"');
+        } catch (error: any) {
+          // Restart command may cause FvwmCommand to exit before getting response
+          // This is expected behavior, not an error
+        }
         return {
           content: [
             {
